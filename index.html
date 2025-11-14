@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>NTE – Sacchetto per Pescate</title>
+
+<style>
+  :root{
+    --bg:#0b1020;
+    --card:#131a2b;
+    --accent:#ffcc00;
+    --risk:#e03a3a;
+    --success:#00d48a;
+    --muted:#8c95a9;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    padding:20px;
+    background:#0b1020;
+    color:#e6eef8;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+  }
+  h1,h2{margin:0 0 6px 0;}
+  .wrap{
+    max-width:900px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns: 320px 1fr;
+    gap:20px;
+  }
+  @media(max-width:800px){
+    .wrap{grid-template-columns:1fr}
+  }
+  .card{
+    background:#131a2b;
+    padding:18px;
+    border-radius:12px;
+    box-shadow:0 6px 18px rgba(0,0,0,0.4);
+    border:1px solid rgba(255,255,255,0.05);
+  }
+  label{
+    display:block;
+    margin-bottom:6px;
+    font-size:14px;
+    color:var(--muted);
+  }
+  input[type=number], select{
+    width:100%;
+    padding:8px;
+    border-radius:8px;
+    border:1px solid rgba(255,255,255,0.1);
+    background:#0e1421;
+    color:#fff;
+    margin-bottom:14px;
+  }
+  .btn{
+    border:0;
+    cursor:pointer;
+    padding:10px 14px;
+    border-radius:10px;
+    font-weight:700;
+    transition:0.2s;
+  }
+  .btn.primary{
+    background:var(--accent);
+    color:#0b0b0b;
+  }
+  .btn.secondary{
+    background:transparent;
+    color:var(--muted);
+    border:1px solid rgba(255,255,255,0.15);
+  }
+  .stage{
+    min-height:200px;
+    background:#0e1421;
+    border-radius:10px;
+    padding:16px;
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+    border:1px solid rgba(255,255,255,0.05);
+  }
+  .token{
+    width:55px;
+    height:55px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:22px;
+    font-weight:700;
+    transform:scale(0);
+    opacity:0;
+    transition:0.25s;
+  }
+  .token.show{transform:scale(1); opacity:1;}
+  .success{background:var(--success); color:#0b0b0b;}
+  .risk{background:var(--risk); color:#fff;}
+  .hiddenToken{
+    background:#1b2237;
+    border:2px dashed rgba(255,255,255,0.05);
+    color:var(--muted);
+  }
+  .counts{
+    margin-top:12px;
+    display:flex;
+    gap:12px;
+  }
+  .badge{
+    background:#1b2237;
+    padding:6px 10px;
+    border-radius:10px;
+    font-size:14px;
+  }
+  .log{
+    margin-top:16px;
+    max-height:260px;
+    overflow:auto;
+    border-top:1px solid rgba(255,255,255,0.1);
+    padding-top:10px;
+  }
+  .log-item{
+    margin-bottom:10px;
+    padding:8px;
+    background:#0e1421;
+    border-radius:8px;
+    border:1px solid rgba(255,255,255,0.05);
+  }
+  .log-meta{
+    font-size:13px;
+    color:var(--muted);
+  }
+</style>
+</head>
+
+<body>
+<div class="wrap">
+
+  <!-- SIDEBAR -->
+  <aside class="card">
+    <h1>NTE – Sacchetto</h1>
+    <p style="color:var(--muted)">Imposta il sacchetto per ogni prova e pesca.</p>
+
+    <label>Successi nel sacchetto</label>
+    <input id="succIn" type="number" min="0" max="50" value="5">
+
+    <label>Rischi nel sacchetto</label>
+    <input id="riskIn" type="number" min="0" max="50" value="5">
+
+    <label>Token da pescare</label>
+    <input id="drawNum" type="number" min="1" max="50" value="6">
+
+    <label>Modalità rivelazione</label>
+    <select id="revealMode">
+      <option value="instant">Tutti insieme</option>
+      <option value="seq">Uno dopo l'altro</option>
+    </select>
+
+    <label>Delay (ms rivelazione sequenziale)</label>
+    <input id="delay" type="number" min="50" max="2000" value="250">
+
+    <button class="btn primary" id="drawBtn">Pesca</button>
+  </aside>
+
+  <!-- MAIN AREA -->
+  <main class="card">
+    <h2>Risultato</h2>
+
+    <div id="stage" class="stage">
+      <span style="color:var(--muted)">Premi <b>Pesca</b> per iniziare.</span>
+    </div>
+
+    <div class="counts">
+      <div class="badge">✔ Successi: <span id="succCount">0</span></div>
+      <div class="badge">✘ Rischi: <span id="riskCount">0</span></div>
+    </div>
+
+    <div class="log" id="log"></div>
+  </main>
+
+</div>
+
+<script>
+/* Fisher–Yates shuffle */
+function shuffle(array){
+  for(let i = array.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+const succIn = document.getElementById("succIn");
+const riskIn = document.getElementById("riskIn");
+const drawNum = document.getElementById("drawNum");
+const drawBtn = document.getElementById("drawBtn");
+const stage = document.getElementById("stage");
+const succCount = document.getElementById("succCount");
+const riskCount = document.getElementById("riskCount");
+const logEl = document.getElementById("log");
+const revealMode = document.getElementById("revealMode");
+const delayEl = document.getElementById("delay");
+
+function renderTokens(tokens){
+  stage.innerHTML = "";
+  tokens.forEach((t,i)=>{
+    const el = document.createElement("div");
+    el.className = "token hiddenToken";
+    el.textContent = "?";
+    el.dataset.type = t;
+    el.dataset.index = i;
+    stage.appendChild(el);
+    requestAnimationFrame(()=> el.classList.add("show"));
+  });
+}
+
+async function reveal(tokens){
+  const mode = revealMode.value;
+  const delay = parseInt(delayEl.value);
+
+  const els = [...stage.children];
+
+  if(mode === "instant"){
+    els.forEach(el=>{
+      const type = el.dataset.type;
+      el.className = "token " + type + " show";
+      el.textContent = type === "success" ? "✔" : "✘";
+    });
+    return;
+  }
+
+  for(let i=0;i<els.length;i++){
+    const el = els[i];
+    const type = el.dataset.type;
+    el.className = "token " + type + " show";
+    el.textContent = type === "success" ? "✔" : "✘";
+    await new Promise(r=>setTimeout(r, delay));
+  }
+}
+
+function updateCounts(tokens){
+  const s = tokens.filter(t=>t === "success").length;
+  const r = tokens.filter(t=>t === "risk").length;
+  succCount.textContent = s;
+  riskCount.textContent = r;
+}
+
+function addLogEntry(tokens){
+  const s = tokens.filter(t=>t==="success").length;
+  const r = tokens.filter(t=>t==="risk").length;
+  const time = new Date().toLocaleString();
+
+  const div = document.createElement("div");
+  div.className = "log-item";
+  div.innerHTML = `
+    <div><b>${tokens.length} token</b> — ${s}✔ / ${r}✘</div>
+    <div class="log-meta">${time}</div>
+    <div>${tokens.map(t=> t==="success" ? "✔" : "✘").join(" ")}</div>
+  `;
+
+  logEl.prepend(div);
+}
+
+drawBtn.addEventListener("click", async ()=>{
+  const s = parseInt(succIn.value);
+  const r = parseInt(riskIn.value);
+  const n = parseInt(drawNum.value);
+
+  if(s + r === 0){
+    alert("Il sacchetto è vuoto!");
+    return;
+  }
+  if(n > s + r){
+    alert("Non puoi pescare più token di quelli nel sacchetto!");
+    return;
+  }
+
+  // crea sacchetto
+  const bag = [];
+  for(let i=0;i<s;i++) bag.push("success");
+  for(let i=0;i<r;i++) bag.push("risk");
+
+  // mescola
+  shuffle(bag);
+
+  // pesca
+  const picked = bag.slice(0, n);
+
+  // mostra placeholder
+  renderTokens(picked);
+
+  // rivela secondo modalità
+  await reveal(picked);
+
+  // aggiorna conteggi
+  updateCounts(picked);
+
+  // log
+  addLogEntry(picked);
+});
+</script>
+
+</body>
+</html>

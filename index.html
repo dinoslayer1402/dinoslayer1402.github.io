@@ -303,4 +303,53 @@ drawBtn.addEventListener("click", async ()=>{
   for(let i=0;i<r;i++) bag.push("risk");
   shuffle(bag);
 
-  const picked = bag.slice(0,n
+  const picked = bag.slice(0,n);
+
+  stage.innerHTML="";
+  picked.forEach(t=>{
+    const el=document.createElement("div");
+    el.className="token hiddenToken";
+    el.textContent="?";
+    el.dataset.type=t;
+    stage.appendChild(el);
+    requestAnimationFrame(()=>el.classList.add("show"));
+  });
+
+  await new Promise(r=>setTimeout(r,50));
+
+  if(revealMode.value==="instant"){
+    [...stage.children].forEach(el=>{
+      const t=el.dataset.type;
+      el.className="token "+t+" show";
+      el.textContent=t==="success"?"✔":"✘";
+    });
+  }else{
+    const delay=parseInt(delayEl.value)||200;
+    for(const el of stage.children){
+      const t=el.dataset.type;
+      el.className="token "+t+" show";
+      el.textContent=t==="success"?"✔":"✘";
+      await new Promise(r=>setTimeout(r,delay));
+    }
+  }
+
+  succCount.textContent = picked.filter(x=>x==="success").length;
+  riskCount.textContent = picked.filter(x=>x==="risk").length;
+});
+
+/* Reset */
+resetBtn.addEventListener("click", ()=>{
+  succIn.value=5;
+  riskIn.value=5;
+  randCount.value=3;
+  randProb.value=50;
+  updatePreview();
+
+  stage.innerHTML='<span class="hint">Premi <b>Pesca</b> per iniziare.</span>';
+  succCount.textContent="0";
+  riskCount.textContent="0";
+});
+</script>
+
+</body>
+</html>

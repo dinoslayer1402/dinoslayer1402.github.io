@@ -170,7 +170,7 @@
     <label for="succIn">Successi nel sacchetto</label>
     <input id="succIn" type="number" min="0" max="999" value="5" />
 
-    <label for="riskIn">Rischi nel sacchetto</label>
+    <label for="riskIn">Fallimenti nel sacchetto</label>
     <input id="riskIn" type="number" min="0" max="999" value="5" />
 
     <label for="drawNum">Token da pescare</label>
@@ -190,7 +190,7 @@
     <!-- AGGIUNTA CASUALE -->
     <label>Aggiungi X token casuali (50/50)</label>
     <div style="display:flex; gap:6px;">
-      <input id="randCount" type="number" min="1" max="500" value="3" style="flex:1" />
+      <input id="randCount" type="number" min="1" max="500" value="0" style="flex:1" />
       <button id="addRandBtn" class="btn secondary">Aggiungi</button>
     </div>
     <input id="randProb" type="hidden" value="50">

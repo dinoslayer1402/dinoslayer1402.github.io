@@ -3,8 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Eh, qui si fanno le pescate</title>
-
+<title>NTE – Sacchetto (preview + token casuali 50/50)</title>
 <style>
   :root{
     --bg:#0b1020;
@@ -14,7 +13,6 @@
     --success:#00d48a;
     --muted:#8c95a9;
   }
-  *{box-sizing:border-box}
   body{
     margin:0;
     padding:20px;
@@ -22,15 +20,14 @@
     color:#e6eef8;
     font-family: ui-sans-serif, system-ui, sans-serif;
   }
-  h1,h2{margin:0 0 6px 0;}
   .wrap{
-    max-width:900px;
+    max-width:960px;
     margin:0 auto;
     display:grid;
-    grid-template-columns: 320px 1fr;
+    grid-template-columns: 360px 1fr;
     gap:20px;
   }
-  @media(max-width:800px){
+  @media(max-width:880px){
     .wrap{grid-template-columns:1fr}
   }
   .card{
@@ -53,7 +50,7 @@
     border:1px solid rgba(255,255,255,0.1);
     background:#0e1421;
     color:#fff;
-    margin-bottom:14px;
+    margin-bottom:12px;
   }
   .btn{
     border:0;
@@ -72,8 +69,35 @@
     color:var(--muted);
     border:1px solid rgba(255,255,255,0.15);
   }
+
+  /* PREVIEW SACCHETTO */
+  #bagPreview{
+    display:flex;
+    flex-wrap:wrap;
+    gap:4px;
+    min-height:32px;
+    padding:6px;
+    border-radius:6px;
+    background:#0e1421;
+    border:1px solid rgba(255,255,255,0.05);
+    margin-bottom:12px;
+  }
+  .pToken{
+    width:18px;
+    height:18px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:12px;
+    font-weight:700;
+  }
+    .p-success{background:var(--success); color:#000;}
+    .p-risk{background:var(--risk); color:#fff;}
+
+  /* STAGE */
   .stage{
-    min-height:200px;
+    min-height:220px;
     background:#0e1421;
     border-radius:10px;
     padding:16px;
@@ -82,11 +106,10 @@
     align-items:center;
     justify-content:center;
     gap:12px;
-    border:1px solid rgba(255,255,255,0.05);
   }
   .token{
-    width:55px;
-    height:55px;
+    width:56px;
+    height:56px;
     border-radius:50%;
     display:flex;
     align-items:center;
@@ -105,20 +128,18 @@
     border:2px dashed rgba(255,255,255,0.05);
     color:var(--muted);
   }
-  .counts{
-    margin-top:12px;
-    display:flex;
-    gap:12px;
-  }
+
+  .counts{margin-top:12px; display:flex; gap:12px;}
   .badge{
     background:#1b2237;
     padding:6px 10px;
     border-radius:10px;
     font-size:14px;
   }
+
   .log{
     margin-top:16px;
-    max-height:260px;
+    max-height:300px;
     overflow:auto;
     border-top:1px solid rgba(255,255,255,0.1);
     padding-top:10px;
@@ -130,10 +151,7 @@
     border-radius:8px;
     border:1px solid rgba(255,255,255,0.05);
   }
-  .log-meta{
-    font-size:13px;
-    color:var(--muted);
-  }
+  .hint{font-size:13px; color:var(--muted);}
 </style>
 </head>
 
@@ -142,28 +160,47 @@
 
   <!-- SIDEBAR -->
   <aside class="card">
-    <h1>Sacchetto</h1>
-    <p style="color:var(--muted)">Imposta il sacchetto per ogni prova e pesca.</p>
+    <h1>NTE – Sacchetto</h1>
+    <p class="hint">Con preview visiva e aggiunta casuale 50/50.</p>
 
-    <label>Successi nel sacchetto</label>
-    <input id="succIn" type="number" min="0" max="50" value="5">
+    <!-- PREVIEW SACCHETTO -->
+    <label>Preview sacchetto</label>
+    <div id="bagPreview"></div>
 
-    <label>Rischi nel sacchetto</label>
-    <input id="riskIn" type="number" min="0" max="50" value="5">
+    <label for="succIn">Successi nel sacchetto</label>
+    <input id="succIn" type="number" min="0" max="999" value="5" />
 
-    <label>Token da pescare</label>
-    <input id="drawNum" type="number" min="1" max="50" value="6">
+    <label for="riskIn">Rischi nel sacchetto</label>
+    <input id="riskIn" type="number" min="0" max="999" value="5" />
 
-    <label>Modalità rivelazione</label>
+    <label for="drawNum">Token da pescare</label>
+    <input id="drawNum" type="number" min="1" max="999" value="6" />
+
+    <label for="revealMode">Modalità rivelazione</label>
     <select id="revealMode">
       <option value="instant">Tutti insieme</option>
       <option value="seq">Uno dopo l'altro</option>
     </select>
 
-    <label>Delay (ms rivelazione sequenziale)</label>
-    <input id="delay" type="number" min="50" max="2000" value="250">
+    <label for="delay">Delay (ms)</label>
+    <input id="delay" type="number" min="50" max="2000" value="250" />
 
-    <button class="btn primary" id="drawBtn">Pesca</button>
+    <div style="height:6px"></div>
+
+    <!-- AGGIUNTA CASUALE -->
+    <label>Aggiungi X token casuali (50/50)</label>
+    <div style="display:flex; gap:6px;">
+      <input id="randCount" type="number" min="1" max="500" value="3" style="flex:1" />
+      <button id="addRandBtn" class="btn secondary">Aggiungi</button>
+    </div>
+    <input id="randProb" type="hidden" value="50">
+
+    <div style="height:10px"></div>
+
+    <div style="display:flex; gap:8px;">
+      <button class="btn primary" id="drawBtn">Pesca</button>
+      <button class="btn secondary" id="resetBtn">Reset</button>
+    </div>
   </aside>
 
   <!-- MAIN AREA -->
@@ -171,7 +208,7 @@
     <h2>Risultato</h2>
 
     <div id="stage" class="stage">
-      <span style="color:var(--muted)">Premi <b>Pesca</b> per iniziare.</span>
+      <span class="hint">Premi <b>Pesca</b> per iniziare.</span>
     </div>
 
     <div class="counts">
@@ -185,124 +222,85 @@
 </div>
 
 <script>
-/* Fisher–Yates shuffle */
-function shuffle(array){
-  for(let i = array.length - 1; i > 0; i--){
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
-}
-
 const succIn = document.getElementById("succIn");
 const riskIn = document.getElementById("riskIn");
-const drawNum = document.getElementById("drawNum");
-const drawBtn = document.getElementById("drawBtn");
+const randCount = document.getElementById("randCount");
+const randProb = document.getElementById("randProb"); // 50 default
+const addRandBtn = document.getElementById("addRandBtn");
+const bagPreview = document.getElementById("bagPreview");
+
 const stage = document.getElementById("stage");
-const succCount = document.getElementById("succCount");
-const riskCount = document.getElementById("riskCount");
-const logEl = document.getElementById("log");
 const revealMode = document.getElementById("revealMode");
 const delayEl = document.getElementById("delay");
+const drawBtn = document.getElementById("drawBtn");
+const resetBtn = document.getElementById("resetBtn");
+const logEl = document.getElementById("log");
+const succCount = document.getElementById("succCount");
+const riskCount = document.getElementById("riskCount");
 
-function renderTokens(tokens){
-  stage.innerHTML = "";
-  tokens.forEach((t,i)=>{
+const MAX_TOTAL = 1000;
+
+/* Update preview */
+function updatePreview(){
+  const s = parseInt(succIn.value) || 0;
+  const r = parseInt(riskIn.value) || 0;
+
+  bagPreview.innerHTML = "";
+
+  for(let i=0;i<s;i++){
     const el = document.createElement("div");
-    el.className = "token hiddenToken";
-    el.textContent = "?";
-    el.dataset.type = t;
-    el.dataset.index = i;
-    stage.appendChild(el);
-    requestAnimationFrame(()=> el.classList.add("show"));
-  });
-}
-
-async function reveal(tokens){
-  const mode = revealMode.value;
-  const delay = parseInt(delayEl.value);
-
-  const els = [...stage.children];
-
-  if(mode === "instant"){
-    els.forEach(el=>{
-      const type = el.dataset.type;
-      el.className = "token " + type + " show";
-      el.textContent = type === "success" ? "✔" : "✘";
-    });
-    return;
+    el.className = "pToken p-success";
+    el.textContent = "✔";
+    bagPreview.appendChild(el);
   }
-
-  for(let i=0;i<els.length;i++){
-    const el = els[i];
-    const type = el.dataset.type;
-    el.className = "token " + type + " show";
-    el.textContent = type === "success" ? "✔" : "✘";
-    await new Promise(r=>setTimeout(r, delay));
+  for(let i=0;i<r;i++){
+    const el = document.createElement("div");
+    el.className = "pToken p-risk";
+    el.textContent = "✘";
+    bagPreview.appendChild(el);
   }
 }
 
-function updateCounts(tokens){
-  const s = tokens.filter(t=>t === "success").length;
-  const r = tokens.filter(t=>t === "risk").length;
-  succCount.textContent = s;
-  riskCount.textContent = r;
+succIn.addEventListener("input", updatePreview);
+riskIn.addEventListener("input", updatePreview);
+updatePreview();
+
+/* Aggiunta casuale 50/50 */
+addRandBtn.addEventListener("click", ()=>{
+  let x = parseInt(randCount.value)||0;
+  if(x<=0){ alert("Numero non valido."); return; }
+
+  let sAdd=0, rAdd=0;
+  for(let i=0;i<x;i++){
+    if(Math.random()<0.5) sAdd++;
+    else rAdd++;
+  }
+
+  succIn.value = (parseInt(succIn.value)||0) + sAdd;
+  riskIn.value = (parseInt(riskIn.value)||0) + rAdd;
+
+  updatePreview();
+});
+
+/* Shuffle */
+function shuffle(a){
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
 }
 
-function addLogEntry(tokens){
-  const s = tokens.filter(t=>t==="success").length;
-  const r = tokens.filter(t=>t==="risk").length;
-  const time = new Date().toLocaleString();
-
-  const div = document.createElement("div");
-  div.className = "log-item";
-  div.innerHTML = `
-    <div><b>${tokens.length} token</b> — ${s}✔ / ${r}✘</div>
-    <div class="log-meta">${time}</div>
-    <div>${tokens.map(t=> t==="success" ? "✔" : "✘").join(" ")}</div>
-  `;
-
-  logEl.prepend(div);
-}
-
+/* Draw */
 drawBtn.addEventListener("click", async ()=>{
-  const s = parseInt(succIn.value);
-  const r = parseInt(riskIn.value);
-  const n = parseInt(drawNum.value);
+  const s = parseInt(succIn.value)||0;
+  const r = parseInt(riskIn.value)||0;
+  const n = parseInt(drawNum.value)||1;
 
-  if(s + r === 0){
-    alert("Il sacchetto è vuoto!");
-    return;
-  }
-  if(n > s + r){
-    alert("Non puoi pescare più token di quelli nel sacchetto!");
-    return;
-  }
+  if(s+r < n){ alert("Non ci sono abbastanza token."); return; }
 
-  // crea sacchetto
-  const bag = [];
+  const bag=[];
   for(let i=0;i<s;i++) bag.push("success");
   for(let i=0;i<r;i++) bag.push("risk");
-
-  // mescola
   shuffle(bag);
 
-  // pesca
-  const picked = bag.slice(0, n);
-
-  // mostra placeholder
-  renderTokens(picked);
-
-  // rivela secondo modalità
-  await reveal(picked);
-
-  // aggiorna conteggi
-  updateCounts(picked);
-
-  // log
-  addLogEntry(picked);
-});
-</script>
-
-</body>
-</html>
+  const picked = bag.slice(0,n

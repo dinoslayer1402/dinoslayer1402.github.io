@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Regione Pokémon</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<section id="intro">
+
+    <div class="pokedex">
+
+        <h1>Benvenuti nella Regione AUREN</h1>
+
+        <button id="openMap">
+            Apri PokéNav
+        </button>
+
+    </div>
+
+</section>
+
+
+<section id="mapSection" class="hidden">
+
+    <div class="mapContainer">
+
+        <img src="assets/map-placeholder.png" class="map">
+
+        <div id="citiesLayer"></div>
+
+    </div>
+
+</section>
+
+
+<div id="cityPopup" class="hidden">
+
+    <div class="popupContent">
+
+        <h2 id="cityName"></h2>
+
+        <p id="cityDesc"></p>
+
+        <button onclick="closePopup()">Chiudi</button>
+
+    </div>
+
+</div>
+
+
+<script src="data/cities.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>

@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () =>{ 
 
 const openMap = document.getElementById("openMap")
 const intro = document.getElementById("intro")
@@ -44,14 +44,13 @@ function openPopup(city){
 popupName.innerText = city.name
 popupDesc.innerText = city.description
 
-popup.classList.remove("hidden")
+popup.classList.add("show")
 
 }
 
 closePopup.addEventListener("click", () => {
 
-popup.classList.add("hidden")
+popup.classList.remove("show")
 
 })
-
 })

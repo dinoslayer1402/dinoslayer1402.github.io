@@ -94,6 +94,18 @@ display:flex;
 justify-content:center;
 align-items:center;
 
+opacity:0;
+pointer-events:none;
+
+transition:opacity 0.2s;
+
+}
+
+#popup.show{
+
+opacity:1;
+pointer-events:auto;
+
 }
 
 .popupContent{

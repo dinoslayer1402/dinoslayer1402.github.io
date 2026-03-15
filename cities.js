@@ -2,30 +2,30 @@ const cities = [
 
 {
 name: "Borgo Inizio",
-x: 52,
+x: 50,
 y: 90,
-description: "Piccolo villaggio costiero dove inizia l'avventura."
+description: "Piccolo villaggio dove inizia l'avventura."
 },
 
 {
 name: "Porto Laguna",
 x: 40,
 y: 70,
-description: "Città portuale costruita vicino alla laguna."
+description: "Città costruita vicino alla laguna."
 },
 
 {
 name: "Silvaria",
 x: 60,
 y: 60,
-description: "Città circondata da fitte foreste."
+description: "Città immersa nella foresta."
 },
 
 {
 name: "Pontebruma",
 x: 30,
 y: 55,
-description: "Collega la penisola alla striscia di terra occidentale."
+description: "Collega la penisola alla striscia occidentale."
 },
 
 {
@@ -39,7 +39,7 @@ description: "Città montana della regione."
 name: "Capitale Nord",
 x: 50,
 y: 15,
-description: "Grande città nella parte più larga della regione."
+description: "Grande città nella parte settentrionale."
 }
 
 ]

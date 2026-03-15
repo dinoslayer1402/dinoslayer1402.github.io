@@ -1,3 +1,5 @@
+document.addEventListener("DOMContentLoaded", () => {
+
 const openMap = document.getElementById("openMap")
 const intro = document.getElementById("intro")
 const mapSection = document.getElementById("mapSection")
@@ -23,7 +25,7 @@ el.style.top = city.y + "%"
 
 el.addEventListener("click", () => {
 
-showPopup(city)
+openPopup(city)
 
 })
 
@@ -32,22 +34,24 @@ citiesLayer.appendChild(el)
 })
 
 
-const popup = document.getElementById("cityPopup")
-const cityName = document.getElementById("cityName")
-const cityDesc = document.getElementById("cityDesc")
+const popup = document.getElementById("popup")
+const popupName = document.getElementById("popupName")
+const popupDesc = document.getElementById("popupDesc")
+const closePopup = document.getElementById("closePopup")
 
+function openPopup(city){
 
-function showPopup(city){
-
-cityName.innerText = city.name
-cityDesc.innerText = city.description
+popupName.innerText = city.name
+popupDesc.innerText = city.description
 
 popup.classList.remove("hidden")
 
 }
 
-function closePopup(){
+closePopup.addEventListener("click", () => {
 
 popup.classList.add("hidden")
 
-}
+})
+
+})
